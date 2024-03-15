@@ -3,7 +3,7 @@ fn main() {
 }
 
 fn hello() -> String {
-    return "Hello, world".to_string();
+    "Hello, world".to_string()
 }
 
 #[cfg(test)]
