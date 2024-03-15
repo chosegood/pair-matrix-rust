@@ -1,18 +1,29 @@
-fn main() {
-    println!("{}", hello());
+use actix_web::{post, web, App, HttpResponse, HttpServer, Responder};
+mod index;
+
+//#[get("/")]
+//async fn hello() -> impl Responder {
+//    HttpResponse::Ok().body("Hello world!")
+//}
+
+#[post("/echo")]
+async fn echo(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
 }
 
-fn hello() -> String {
-    "Hello, world".to_string()
+async fn manual_hello() -> impl Responder {
+    HttpResponse::Ok().body("Hey there!")
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = hello();
-        assert_eq!(result, "Hello, world");
-    }
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new()
+            .route("/", web::get().to(index::index_handler))
+            .service(echo)
+            .route("/hey", web::get().to(manual_hello))
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
